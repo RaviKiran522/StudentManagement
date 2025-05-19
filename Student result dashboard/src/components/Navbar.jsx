@@ -106,8 +106,9 @@ export default function Navbar({ setShowHomePage }) {
               variant="contained"
               size="small"
               onClick={() => {
-                localStorage.setItem("loggedIn", "true");
+                localStorage.setItem("loggedIn", "false");
                 setShowHomePage(false);
+                navigation("/");
               }}
             >
               Logout

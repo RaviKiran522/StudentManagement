@@ -20,9 +20,9 @@ function App() {
     error: false,
     errorMessage: "",
   });
-
+  const status = localStorage.getItem("loggedIn") === "true" ? true : false;
   const [showHomePage, setShowHomePage] = useState(
-    localStorage.getItem("loggedIn") === "true" ? true : false
+    status
   );
   const handleLogin = () => {
     let isValid = true;
@@ -58,7 +58,7 @@ function App() {
   };
   console.log("userName: ", userName);
   return (
-    <Grid container>
+    <Grid container justifyContent={"center"}>
       {!showHomePage ? (
         <Login
           userName={userName}
