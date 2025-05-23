@@ -1,1 +1,71 @@
-/node_modules/
+
+## Ignore Visual Studio temporary files, build results, and
+## user-specific files
+.vs/
+*.user
+*.suo
+
+## Ignore build results
+bin/
+obj/
+
+## Ignore Rider files
+.idea/
+
+## Ignore logs
+*.log
+
+## Ignore user secrets (if not using secure secret store)
+secrets.json
+
+## Ignore ASP.NET Scaffolding generated files
+ScaffoldingReadMe.txt
+
+## Ignore environment-specific files
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json.user
+
+## Ignore publish output
+publish/
+out/
+
+## Ignore database files (if using SQLite or similar)
+*.db
+*.mdf
+*.ldf
+
+## Ignore global.json SDK version lock (optional)
+global.json
+
+## Ignore ReSharper files
+_ReSharper*/
+*.DotSettings.user
+
+## Ignore Coverage and Test Results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## Ignore package manager stuff
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Ignore Azure deployment files
+.scm/
+
+## Ignore Docker artifacts (if used)
+**/*.tar
+**/*.tgz
+
+## Node modules (if full-stack project with React front-end)
+node_modules/
+
+# Optional: ignore secrets or credentials
+.env
+.env.*
+

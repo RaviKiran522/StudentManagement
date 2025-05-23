@@ -1,0 +1,6 @@
+@StudentResultDashBoard_HostAddress = http://localhost:5115
+
+GET {{StudentResultDashBoard_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
