@@ -9,7 +9,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import CloseIcon from "@mui/icons-material/Close";
-import {Alert} from "@mui/material";
+import { Alert } from "@mui/material";
+import axios from "axios";
 export default function AddMarks({
   from = "Add",
   open,
@@ -27,16 +28,12 @@ export default function AddMarks({
     maths: "",
     science: "",
     social: "",
-    class: student.class,
-    rollNo: student.rollNo,
+    clas: student.clas,
+    rollno: student.rollNo,
   };
-  const marksDataFromStorage = localStorage.getItem("marks");
-  const marks = marksDataFromStorage ? JSON.parse(marksDataFromStorage) : [];
-
-  const filterdMarks = marks.find((std) => std.RollNo === student.RollNo);
-  console.log("from: ", from, "filterdMarks: ", filterdMarks);
+  console.log("student: ", student);
   const [formData, setFormData] = useState(
-    from === "Add" ? initialMarks : filterdMarks
+    from === "Add" ? initialMarks : {}
   );
   const [showAlert, setShowAlert] = useState(false);
   const [totalMarks, setTotalMarks] = useState("");
@@ -45,37 +42,79 @@ export default function AddMarks({
     setFormData({ ...formData, [name]: value });
   };
   console.log("formData: ", formData);
+
+  const postMarks = async (markData) => {
+
+    const requestBody = {
+      rollno: student.rollNo,
+      clas: student.clas,
+      telugu: markData.telugu,
+      hindi: markData.hindi,
+      english: markData.english,
+      maths: markData.maths,
+      social: markData.social,
+      science: markData.science,
+    };
+    console.log("requestBody: ", requestBody);
+    await axios
+      .post("https://localhost:7135/api/Marks", requestBody)
+      .then((response) => {
+        console.log("marksadded", response.markData);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const updateMarks = async (markData) => {
+    const reqObject = {
+      rollno: student.rollNo,
+      clas: student.clas,
+      telugu: markData.telugu,
+      hindi: markData.hindi,
+      english: markData.english,
+      maths: markData.maths,
+      social: markData.social,
+      science: markData.science,
+    };
+    const response = await axios.put(
+      `https://localhost:7135/api/Marks/rollnumber/${student.rollNo}`,
+      reqObject
+    );
+  };
+
   const handleAddOrEditMarks = () => {
     if (from === "Add") {
-      const findstudent = marks.find(
-        (stuma) => stuma.RollNo === student.RollNo
-      );
-      if (findstudent) {
-        setShowAlert(true);
-        return;
-      } else {
-        const updatedMarks = [...marks, formData];
-        localStorage.setItem("marks", JSON.stringify(updatedMarks));
+        postMarks(formData);
         handleClose();
-      }
     } else {
-      const updatedMarks = marks.map((student) => {
-        if (student.RollNo === formData.RollNo) {
-          return { ...student, ...formData };
-        } else {
-          return student;
-        }
-      });
-      localStorage.setItem("marks", JSON.stringify(updatedMarks));
+      updateMarks(formData);
       handleClose();
     }
   };
+
+  const getMarksData = async () => {
+    let response1 = await axios.get(`https://localhost:7135/api/Marks/rollnumber/${student.rollNo}`);
+    if(response1.data) {
+      response1.data.clas = Number(response1.data.clas)
+      setFormData(response1.data);
+    } else {
+      setFormData(initialMarks);
+    }
+    
+  }
+
+  useEffect(()=>{
+    if(from !== "Add"){
+      getMarksData();
+    }
+  }, [])
 
   console.log("formData: ", formData);
   useEffect(() => {
     let total = 0;
     for (let i in formData) {
-      if (i !== "class" && i !== "rollNo") {
+      if (i !== "clas" && i !== "rollno") {
         total += parseInt(formData[i]);
       }
     }
@@ -139,8 +178,8 @@ export default function AddMarks({
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  name={"class"}
-                  value={formData.class}
+                  name={"clas"}
+                  value={student.clas}
                   label="Class"
                   onChange={handleOnChange}
                   width="250px"
@@ -165,10 +204,10 @@ export default function AddMarks({
                   id="outlined-basic"
                   label="student RollNo"
                   variant="outlined"
-                  name="RollNo"
+                  name="Rollno"
                   width="250px"
                   disabled={true}
-                  value={formData.rollNo}
+                  value={formData.rollno}
                   onChange={handleOnChange}
                 />
               </FormControl>

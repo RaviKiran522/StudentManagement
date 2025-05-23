@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -9,6 +9,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
+
 export default function AddStudent({
   from = "Add",
   open,
@@ -18,15 +20,16 @@ export default function AddStudent({
   setStudentsData,
   filteredStudents,
   setFilteredStudents,
+  getStudentsData,
 }) {
   const initialValues = {
     id: "",
-    name: "",
+    nam: "",
     rollNo: "",
-    class: "",
+    clas: "",
     classTeacher: "",
     fatherName: "",
-    address: "",
+    adds: "",
     mobileNumber: "",
   };
   console.log("from: ", from);
@@ -40,36 +43,71 @@ export default function AddStudent({
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddOrEditStudent = () => {
-    if (from === "Add") {
-      setStudentsData([formData, ...studentsData]);
-      setFilteredStudents([formData, ...filteredStudents]);
-      localStorage.setItem(
-        "students",
-        JSON.stringify([formData, ...studentsData])
-      );
+  const postData = async (stuData) => {
+    const requestBody = {
+      id: String(studentsData.length + 1),
+      nam: stuData?.nam,
+      rollNo: stuData?.rollNo,
+      clas: stuData?.clas ? String(stuData?.clas) : "",
+      classTeacher: stuData?.classTeacher,
+      fatherName: stuData?.fatherName,
+      adds: stuData?.adds,
+      mobileNumber: stuData?.mobileNumber,
+    };
+    await axios
+      .post("https://localhost:7135/api/Students", requestBody)
+      .then((response) => {
+        console.log("Student added:", response.stuData);
+      })
+      .catch((error) => {
+        console.error("Error adding student:", error);
+      });
+    const response = await axios.get("https://localhost:7135/api/Students");
+    if (response.data.length > 0) {
+      setStudentsData(response.data);
+      setFilteredStudents(response.data);
     } else {
-      const updatedStudent = studentsData.map((std) => {
-        if (std.rollNo === student.rollNo) {
-          return formData;
-        } else {
-          return std;
-        }
-      });
-      setStudentsData(updatedStudent);
-      localStorage.setItem("students", JSON.stringify(updatedStudent));
-      const updatedFilterStudent = filteredStudents.map((stu) => {
-        if (stu.rollNo === student.rollNo) {
-          return formData;
-        } else {
-          return stu;
-        }
-      });
-      setFilteredStudents(updatedFilterStudent);
+      setStudentsData([]);
+      setFilteredStudents([]);
     }
-    handleClose();
   };
 
+  const updateStudent = async (stuData) => {
+    const requestBody = {
+      id: stuData?.id,
+      nam: stuData?.nam,
+      rollNo: stuData?.rollNo,
+      clas: stuData?.clas ? String(stuData?.clas) : "",
+      classTeacher: stuData?.classTeacher,
+      fatherName: stuData?.fatherName,
+      adds: stuData?.adds,
+      mobileNumber: stuData?.mobileNumber,
+    };
+
+    const response = await axios.put(
+      `https://localhost:7135/api/students/rollnumber/${student?.rollNo}`,
+      requestBody
+    );
+    const response1 = await axios.get("https://localhost:7135/api/Students");
+    if (response1.data.length > 0) {
+      setStudentsData(response1.data);
+      setFilteredStudents(response1.data);
+    } else {
+      setStudentsData([]);
+      setFilteredStudents([]);
+    }
+  };
+
+  const handleAddOrEditStudent = async () => {
+    if (from === "Add") {
+      postData(formData);
+    } else {
+      updateStudent(formData);
+    }
+    handleClose();
+    setFormData(initialValues);
+  };
+  console.log("open", open);
   return (
     <Box container>
       <Modal
@@ -116,10 +154,11 @@ export default function AddStudent({
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  name={"class"}
-                  value={formData.class}
+                  name={"clas"}
+                  value={formData.clas}
                   label="Class"
                   onChange={handleOnChange}
+                  disabled={from === "Edit" ? true : false}
                   width="250px"
                 >
                   <MenuItem value={1}>I class</MenuItem>
@@ -144,6 +183,7 @@ export default function AddStudent({
                   name="rollNo"
                   width="250px"
                   value={formData.rollNo}
+                  disabled={from === "Edit" ? true : false}
                   onChange={handleOnChange}
                 />
               </FormControl>
@@ -164,9 +204,9 @@ export default function AddStudent({
                   id="outlined-basic"
                   label="student name"
                   variant="outlined"
-                  name="name"
+                  name="nam"
                   width="250px"
-                  value={formData.name}
+                  value={formData.nam}
                   onChange={handleOnChange}
                 />
               </FormControl>
@@ -213,9 +253,9 @@ export default function AddStudent({
                   id="outlined-basic"
                   label="student address"
                   variant="outlined"
-                  name="address"
+                  name="adds"
                   width="250px"
-                  value={formData.address}
+                  value={formData.adds}
                   onChange={handleOnChange}
                 />
               </FormControl>

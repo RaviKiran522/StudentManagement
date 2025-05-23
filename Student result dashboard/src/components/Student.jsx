@@ -92,13 +92,13 @@ const paginatedStudents = students.slice(
               </Grid>
               <Grid item xs={3}>
                 <p>
-                  <b>Name:</b> {student.name}
+                  <b>Name:</b> {student.nam}
                 </p>
                 <p>
                   <b>Roll No:</b> {student.rollNo}
                 </p>
                 <p>
-                  <b>Class:</b> {student.class}
+                  <b>Class:</b> {student.clas}
                 </p>
                 <p>
                   <b>Class Teacher:</b> {student.classTeacher}
@@ -107,10 +107,10 @@ const paginatedStudents = students.slice(
               {!calledFromMarksManagement && (
                 <Grid item xs={3}>
                   <p>
-                    <b>Father Name:</b> {student.name}
+                    <b>Father Name:</b> {student.fatherName}
                   </p>
                   <p>
-                    <b>Address:</b> {student.address}
+                    <b>Address:</b> {student.adds}
                   </p>
                   <p>
                     <b>Mobile Number:</b> {student.mobileNumber}
@@ -167,7 +167,7 @@ const paginatedStudents = students.slice(
                   direction={"column"}
                 >
                   <EditIcon onClick={() => handleedit(student)} />
-                  <DeleteIcon onClick={() => handledelete(student.id)} />
+                  <DeleteIcon onClick={() => handledelete(student.rollNo)} />
                 </Grid>
               )}
             </Grid>
