@@ -13,11 +13,12 @@ import AddStudent from "./AddStudent";
 import { Pagination } from "@mui/material";
 import axios from "axios";
 
-function StudentManagement() {
-  const [searchFilter, setSearchFilter] = useState({
+const initialValue = {
     selectstudentclass: "",
     studentrollno: "",
-  });
+  }
+function StudentManagement() {
+  const [searchFilter, setSearchFilter] = useState(initialValue);
   const [studentsData, setStudentsData] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [openEdit, setOpenEdit] = React.useState({
@@ -175,7 +176,9 @@ function StudentManagement() {
           </Button>{" "}
           <Button
             variant="contained"
-            onClick={() => setFilteredStudents(studentsData)}
+            onClick={() => {setFilteredStudents(studentsData)
+              setSearchFilter(initialValue)
+            }}
           >
             Clear Filter
           </Button>
